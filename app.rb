@@ -22,12 +22,49 @@ get('/albums') do
     @albums = Album.all
   end
   erb(:albums)
-
-
-
-  # @albums = Album.all
-  # erb(:albums)
 end
+
+# Look below for problems
+get('/artists') do
+  if params["search"]
+    @artists = Artist.search(params[:search])
+  elsif params["sort"]
+    @artists = Artist.sort()
+  else
+    @artists = Artist.all
+  end
+  erb(:artists)
+end
+
+post('/artists') do
+  name = params[:artist_name]
+  artist = Artist.new({:name => name, :id => nil})
+  artist.save()
+  redirect to('/artists')
+end
+
+patch('/artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  @artist.update(params[:name])
+  redirect to('/artists')
+end
+
+delete('/artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  @artist.delete()
+  redirect to('/artists')
+end
+
+get('artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  if @artist != nil
+    erb(:artist)
+  else
+    erb(:album_error)
+  end
+end
+
+
 
 get ('/albums/new') do
   erb(:new_album)
